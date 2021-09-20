@@ -8,7 +8,8 @@ import "./app.css"
 
 import {Consumer} from "./context/authenticationContext";
 
-import Authenticate from "./components/Authenticate";
+import Signup from "./components/Signup";
+import SignIn from "./components/SignIn";
 import UploadForm from "./components/UploadForm";
 import Post from "./components/Post"
 
@@ -25,11 +26,15 @@ export default function App(){
             setPosts(postsPlaceholder)
         })
     },[])
+    console.log(posts)
     return(
         <Consumer>
         {({loggedIn,toggleLoggedIn, user}) => {
             if(!loggedIn) return(
-                <Authenticate toggleLoggedIn={toggleLoggedIn}/>
+                <>
+                <Signup toggleLoggedIn={toggleLoggedIn}/>
+                <SignIn toggleLoggedIn={toggleLoggedIn}/>
+                </>
             )
             else return(
                 <div className="app">

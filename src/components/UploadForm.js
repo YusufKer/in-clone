@@ -1,20 +1,27 @@
 import {useRef} from "react";
-import {db} from "../firebase/firebaseConfig"
+import {db} from "../firebase/firebaseConfig";
+import {getStorage, ref, uploadBytes} from "firebase/storage";
 import { addDoc, collection, Timestamp } from "firebase/firestore"; 
 
 // Add a new document in collection "cities"
 
 export default function UploadForm({user}){
-    console.log(user);
+    const storage = getStorage();
     const fileRef = useRef();
     const captionRef = useRef();
     const handleSubmit = async (e) =>{
         e.preventDefault();
+        const fileName = fileRef.current.value.split("\\")[fileRef.current.value.split("\\").length - 1]
         await addDoc(collection(db, "posts"), {
-            username:"test user",
+            username:user.email,
             caption: captionRef.current.value,
-            imageUrl: fileRef.current.value,
+            imageUrl: `gs://instagram-clone-d03b1.appspot.com/${fileName}`,
             timestamp: Timestamp.fromDate(new Date())
+        });
+        const uploadRef = ref(storage,fileName);
+        uploadBytes(uploadRef, fileRef.current.files[0]).then((snapshot) => {
+            console.log('Uploaded a blob or file!');
+            console.log(snapshot)
         });
         captionRef.current.value = '';
         fileRef.current.value = '';

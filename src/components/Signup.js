@@ -2,7 +2,7 @@ import {useRef} from "react";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 
-export default function Authenticate({toggleLoggedIn}){
+export default function Signup({toggleLoggedIn}){
     const emailRef = useRef();
     const passwordRef = useRef();
     const confirmPasswordRef = useRef();
@@ -23,6 +23,7 @@ export default function Authenticate({toggleLoggedIn}){
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
+                console.log({errorCode,errorMessage})
                 // ..
             });
             
@@ -31,7 +32,7 @@ export default function Authenticate({toggleLoggedIn}){
 
     return(
         <div className="authentication">
-            <h2>Sign up</h2>
+            <h2>Sign Up</h2>
             <form onSubmit={handleSubmit}>
                 <input type="email" placeholder="Email" ref={emailRef}/>
                 <input type="password" placeholder="password" ref={passwordRef}/>
