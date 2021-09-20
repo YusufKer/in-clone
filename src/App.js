@@ -1,25 +1,58 @@
-import logo from './logo.svg';
-import './App.css';
+import {useState, useEffect} from "react";
+import {collection, onSnapshot} from "firebase/firestore"; 
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import {db} from "./firebase/firebaseConfig"
+
+import '@fontsource/roboto/300.css';
+import "./app.css"
+
+import {Consumer} from "./context/authenticationContext";
+
+import Authenticate from "./components/Authenticate";
+import UploadForm from "./components/UploadForm";
+import Post from "./components/Post"
+
+export default function App(){
+    var loggedIn = false;
+    const [posts, setPosts] = useState(null);
+    const postsRef = collection(db, "posts");
+    useEffect(()=>{
+        const unsub = onSnapshot(postsRef, response =>{
+            let postsPlaceholder = [];
+            response.forEach(item => {
+                postsPlaceholder.push((item.data()));
+            })
+            setPosts(postsPlaceholder)
+        })
+    },[])
+    return(
+        <Consumer>
+        {({loggedIn,toggleLoggedIn, user}) => {
+            if(!loggedIn) return(
+                <Authenticate toggleLoggedIn={toggleLoggedIn}/>
+            )
+            else return(
+                <div className="app">
+                    <div className="app__header">
+                        <img className="app__headerImage" src="https://www.instagram.com/static/images/web/mobile_nav_type_logo.png/735145cfe0a4.png" alt="logo"/>
+                    </div>
+                    <UploadForm user={user}/>
+                    {posts === null ? "loading" : posts.map((post, i)=><Post key={i} username={post.username} caption={post.caption} imageURL={post.imageURL}/>)}
+                </div>
+            )
+        }
+        }
+        </Consumer>
+    )
 }
 
-export default App;
+// return(
+//     <div className="app">
+//     <div className="app__header">
+//         <img className="app__headerImage" src="https://www.instagram.com/static/images/web/mobile_nav_type_logo.png/735145cfe0a4.png" alt="logo"/>
+//     </div>
+//     <UploadForm/>
+//     {posts === null ? "loading" : posts.map((post, i)=><Post key={i} username={post.username} caption={post.caption} imageURL={post.imageURL}/>)}
+// </div> :
+// <Authenticate/>
+// )
