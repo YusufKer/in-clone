@@ -3,8 +3,6 @@ import {db} from "../firebase/firebaseConfig";
 import {getStorage, ref, uploadBytes} from "firebase/storage";
 import { addDoc, collection, Timestamp } from "firebase/firestore"; 
 
-// Add a new document in collection "cities"
-
 export default function UploadForm({user}){
     const storage = getStorage();
     const fileRef = useRef();
@@ -15,7 +13,7 @@ export default function UploadForm({user}){
         await addDoc(collection(db, "posts"), {
             username:user.email,
             caption: captionRef.current.value,
-            imageUrl: `gs://instagram-clone-d03b1.appspot.com/${fileName}`,
+            imageUrl: fileName,
             timestamp: Timestamp.fromDate(new Date())
         });
         const uploadRef = ref(storage,fileName);
